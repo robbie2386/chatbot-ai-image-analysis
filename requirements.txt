@@ -1,6 +1,6 @@
 
 flask
-gunicorn
+gunicorn==20.1.0
 opencv-python
 pillow
 requests
