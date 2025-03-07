@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 import cv2
 import numpy as np
@@ -35,32 +34,29 @@ def analyze_image():
 
     file = request.files['image']
     image_stream = io.BytesIO(file.read())
-    image = np.array(Image.open(image_stream))
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    
+
+    try:
+        image = Image.open(image_stream).convert("RGB")  # Konversi gambar ke RGB agar aman
+        image = np.array(image)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    except Exception as e:
+        return jsonify({'error': f'Gagal memproses gambar: {str(e)}'}), 400
+
     detected_text = extract_text_from_image(image)
     num_faces = detect_faces(image)
     blurry = is_blurry(image)
-    
+
     result = {
         "Teks dalam gambar": detected_text if detected_text else "Tidak ada teks terdeteksi.",
         "Jumlah wajah terdeteksi": num_faces,
         "Foto buram": "Ya" if blurry else "Tidak"
     }
-    
+
     return jsonify(result)
 
-import os
-
-port = os.getenv("PORT")
-
-# Jika variabel PORT tidak ditemukan atau tidak valid, gunakan default 5000
-if port is None or not port.isdigit():
-    print("⚠️ WARNING: PORT tidak ditemukan atau tidak valid. Menggunakan port default 5000.")
-    port = "5000"
-
+# Menggunakan port dari Railway
+port = os.getenv("PORT", "5000")  # Jika PORT tidak ditemukan, gunakan 5000
 port = int(port)  # Konversi ke integer
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=port, debug=True)
-
