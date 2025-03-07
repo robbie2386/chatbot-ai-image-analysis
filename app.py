@@ -1,11 +1,12 @@
 
 from flask import Flask, request, jsonify
 import cv2
-import pytesseract
 import numpy as np
+import pytesseract
 import requests
 from PIL import Image
 import io
+import os
 
 app = Flask(__name__)
 
@@ -49,6 +50,9 @@ def analyze_image():
     
     return jsonify(result)
 
+import os
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 5000))  # Ambil port dari Railway
+    app.run(host="0.0.0.0", port=port, debug=True)
     
