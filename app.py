@@ -52,7 +52,15 @@ def analyze_image():
 
 import os
 
+port = os.getenv("PORT")
+
+# Jika variabel PORT tidak ditemukan atau tidak valid, gunakan default 5000
+if port is None or not port.isdigit():
+    print("⚠️ WARNING: PORT tidak ditemukan atau tidak valid. Menggunakan port default 5000.")
+    port = "5000"
+
+port = int(port)  # Konversi ke integer
+
 if __name__ == '__main__':
-    port = int(os.getenv("PORT", 5000))  # Ambil port dari Railway
     app.run(host="0.0.0.0", port=port, debug=True)
-    
+
